@@ -4,12 +4,23 @@ import java.util.*;
 
 public class Magic {
 
-    public static void run(List<Integer> numberGuys, Map<Integer, List<Integer>> guysPrefer, Map<Integer, List<Integer>> girlPrefer) {
+    public static void run(List<Integer> numberGuys, Map<Integer, List<Integer>> guysPrefer, Map<Integer, List<Integer>> girlPrefer, String[] namesGuy,String[] namesGirl) {
         Map<Integer, Integer> matches = match(numberGuys, guysPrefer, girlPrefer);
+        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
         for (Map.Entry<Integer, Integer> couple : matches.entrySet()) {
-            System.out.println(
-                    DataHandling.namesWomen[couple.getKey()] + " замужем за  " + DataHandling.namesMen[couple.getValue()]);
+            for (int i = 0; i < namesGirl.length; i++) {
+                if (couple.getKey() == DataHandling.idWomen[i]){
+                    System.out.print("♥\t\t" + namesGirl[i]+" замужем за ");
+                    for (int j = 0; j < namesGuy.length; j++) {
+                        if (couple.getValue() == DataHandling.idMen[j]){
+                            System.out.print(namesGuy[j]);
+                            System.out.println();
+                        }
+                    }
+                }
+            }
         }
+        System.out.println("♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥");
     }
 
     private static Map<Integer, Integer> match(List<Integer> guys, Map<Integer, List<Integer>> preferGuys, Map<Integer, List<Integer>> preferGirls) {
@@ -20,14 +31,12 @@ public class Magic {
             Integer thisGuy = freeGuys.remove(0);
             List<Integer> thisGuyPrefers = preferGuys.get(thisGuy);
             for (Integer girl : thisGuyPrefers) {
-                System.out.println("2");
                 if (engagedTo.get(girl) == null) {
                     engagedTo.put(girl, thisGuy);
                     break;
                 } else {
                     Integer otherGuy = engagedTo.get(girl);
                     List<Integer> thisGirlPrefers = preferGirls.get(girl);
-                    System.out.println(thisGirlPrefers.indexOf(thisGuy));
                     if (thisGirlPrefers.indexOf(thisGuy) <
                             thisGirlPrefers.indexOf(otherGuy)) {
                         engagedTo.put(girl, thisGuy);
