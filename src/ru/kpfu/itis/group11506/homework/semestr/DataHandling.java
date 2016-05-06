@@ -6,14 +6,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class DataHandling {
-
-    /**
-     * total - общее количество клиентов.
-     * numberOfMen - количество мужчин.
-     * numberOfWomen - количество женщин.
-     * m - массив с данными только мужчин, без учета их предпочтений.
-     * w - массив с данными только женщин, без учета их предпочтений.
-     */
+    
     private static int total;
     private static int numberOfMen;
     private static int numberOfWomen;
@@ -28,11 +21,7 @@ public class DataHandling {
     protected static Map<Integer, List<Integer>> mapForMen = new HashMap<>();
     protected static Map<Integer, List<Integer>> mapForWomen = new HashMap<>();
 
-    /**
-     * Input.bin - файл для считки.
-     * В методе считываются из файла данные в массив char. Далее массив преобразуется в строку.
-     * return string - строка с данными из файла.
-     */
+
     public static String readInputFile() throws IOException {
         String string = "";
         File f = new File("./src/ru/kpfu/itis/group11506/homework/semestr/Input.bin");
@@ -47,18 +36,6 @@ public class DataHandling {
         return string;
     }
 
-    /**
-     * Метод для подсчета количества мужчин и женщин.
-     * На вход принимает строку с танными клиентов.
-     * split() -  разделяет считаную строку на два элемента массива строк String[] items.
-     * Первый он же нулевой элемент массива строк с помощью метода split() разднляется на новый массив строк String[] newitems.
-     * Статической переменой total присваевается значение длины массива newitems, так как количество элементов массива равно
-     * общем количеству клиентов.
-     * В цикле for пробегает по всем элементам массива String[] newitems преобразует в масив символов char[] b.
-     * Каждый элемент массив символов char[] b проверяется на наличие символа 'm', если же такой есть счетчик увеличивается.
-     * Скетчик приравнивается к статической переменной numberOfMen. Далее другой статической переменной numberOfWomen присваевается
-     * число равное разности общего количества клиентов и количества клиентов мужского пола.
-     */
     public static void helper(String string) {
         int i = 0;
         String[] items = string.split(";\r\n");
@@ -74,20 +51,6 @@ public class DataHandling {
         numberOfWomen = total - i;
     }
 
-    /**
-     * Метод заполняет массивы
-     * m - массив с данными только мужчин, без учета их предпочтений.
-     * w - массив с данными только женщин, без учета их предпочтений.
-     * На вход принимает строку с данными клиентов.
-     * Два массива мужчин и женьщин
-     * split() -  разделяет считаную строку на два элемента массива строк String[] items.
-     * Первый он же нулевой элемент массива строк с помощью метода split() разднляется на новый массив строк String[] newitems.
-     * В цикле for пробегает по всем элементам массива String[] newitems преобразует в масив символов char[] b.
-     * Каждый элемент массив символов char[] b проверяется на наличие символа 'm', если же такой есть
-     * элнмент масива строк String[] newitems приравнивается порядковому элементу локального массива мужчин String[] men,
-     * иначе массиву женщин.
-     * Локальные массивы приравниваются "глобальнвм" статическим.
-     */
     public static void fileDivision(String string) {
         String[] men = new String[numberOfMen];
         String[] women = new String[numberOfWomen];
@@ -108,14 +71,6 @@ public class DataHandling {
         w = women;
     }
 
-    /**
-     * Строка с данными мужчин несет
-     * вспомогательный характер для удобного использования split() метода, метод for создает из глобального массива с данными
-     * строку с пробелами между клиетами, String[] ma массив строк после split().
-     * Массивы  String[] menName и int[] idM с разделенными данными.
-     * Три цикла for для заполнения массивов и класса массива. Для заполнения используется шаг 3 и для индексов
-     * метод перевода в int, последний for Класс массив заполняется данными.(Аналогичные переменные для девушек).
-     */
     public static void createBaze(String string) {
         //пременные для мужчин
         String menString = "";
@@ -188,30 +143,34 @@ public class DataHandling {
             if (gh == idW[k]) {
                 womenS[k] = sortSecond[z + 1];
                 k++;
+                Map<Integer, List<Integer>> mapWomen = new HashMap<>();
             }
         }
         selectionWomen = womenS;
     }
 
-    public static void putInMap() {
+    public static ArrayList<Integer> transfer(String selection) {
         List<Integer> listArray = new ArrayList<>();
-        for (int i = 0; i < m.length; i++) {
-            String[] helpString = selectionMen[i].split(",");
-            for (int j = 0; j < w.length; j++) {
-                listArray.add(Integer.parseInt(helpString[j]));
-            }
-            mapForMen.put(idMen[i], listArray);
-            listArray.clear();
-        }
-        for (int i = 0; i < w.length; i++) {
-            String[] helpString = selectionWomen[i].split(",");
-            for (int j = 0; j < m.length; j++) {
-                listArray.add(Integer.parseInt(helpString[j]));
+        String[] helpString = selection.split(",");
+        for (int j = 0; j < m.length; j++) {
+            listArray.add(Integer.parseInt(helpString[j]));
 
-            }
-            mapForWomen.put(idWomen[i], listArray);
-            listArray.clear();
         }
+        return (ArrayList<Integer>) listArray;
+    }
+
+    public static void putInMap() {
+        Map<Integer, List<Integer>> mapMen = new HashMap<>();
+        Map<Integer, List<Integer>> mapWomen = new HashMap<>();
+        for (int i = 0; i < m.length; i++) {
+            mapMen.put(idMen[i], transfer(selectionMen[i]));
+
+        }
+        mapForMen = mapMen;
+        for (int i = 0; i < w.length; i++) {
+            mapWomen.put(idWomen[i], transfer(selectionWomen[i]));
+        }
+        mapForWomen = mapWomen;
     }
 
     private static void oops() {
@@ -220,8 +179,7 @@ public class DataHandling {
         }
     }
 
-    public static List<Integer> m1 = new LinkedList<>();
-
+    private static List<Integer> m1 = new LinkedList<>();
 
     public static void run() throws IOException {
         helper(readInputFile());
@@ -229,6 +187,6 @@ public class DataHandling {
         createBaze(readInputFile());
         putInMap();
         oops();
-        Magic.run(m1, mapForMen, mapForWomen);
+        Magic.run(m1, mapForMen, mapForWomen, namesMen, namesWomen);
     }
 }
