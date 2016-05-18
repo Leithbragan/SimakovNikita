@@ -1,48 +1,32 @@
 package ru.kpfu.itis.group11506.homework.semestr;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+// Вынести IO, выделить модель (data) в отдельный класс. Получать и записывать data вне core модуля
 public class DataHandling {
 
-    private static int total;
-    private static int numberOfMen;
-    private static int numberOfWomen;
-    private static List<String> namesMen;
-    private static List<String> namesWomen;
-    private static List<Integer> idMen;
-    private static List<Integer> idWomen;
-    private static List<String> selectionMen;
-    private static List<String> selectionWomen;
-    private static Map<Integer, List<Integer>> mapForMen = new HashMap<>();
-    private static Map<Integer, List<Integer>> mapForWomen = new HashMap<>();
+    private String text;
+    private int total;
+    private int numberOfMen;
+    private int numberOfWomen;
+    private List<String> namesMen;
+    private List<String> namesWomen;
+    private List<Integer> idMen;
+    private List<Integer> idWomen;
+    private List<String> selectionMen;
+    private List<String> selectionWomen;
+    private Map<Integer, List<Integer>> mapForMen = new HashMap<>();
+    private Map<Integer, List<Integer>> mapForWomen = new HashMap<>();
 
-
-    public static String readInputFile() throws IOException {
-        String string = "";
-        File f = new File("./src/ru/kpfu/itis/group11506/homework/semestr/Input.bin");
-        try (FileReader reader = new FileReader(f)) {
-            char[] buffer = new char[(int) f.length()];
-            reader.read(buffer);
-            string = new String(buffer);
-        } catch (IOException ex) {
-
-            System.out.println(ex.getMessage());
-        }
-        return string;
-    }
-
-    public static String elementStringArray(String string, int numberElement) {
-        String[] items = string.split(";\r\n");
+    public String elementStringArray(String string, int numberElement) {
+        String[] items = string.split("; \r\n");
         return items[numberElement];
     }
 
-    public static String[] sortArray() throws IOException {
+    public String[] sortArray() {
         String sort = "";
-        String[] sortFirst = elementStringArray(readInputFile(), 1).split("\r\n");
+        String[] sortFirst = elementStringArray(text, 1).split("\n");
         sortFirst[0] = sortFirst[0].replace("sort = ", "");
         for (int z = 0; z < total; z++) {
             sort += sortFirst[z] + " ";
@@ -53,7 +37,7 @@ public class DataHandling {
         return sortArray;
     }
 
-    public static String createString(String[] stringArray) {
+    public String createString(String[] stringArray) {
         String string = "";
         for (int i = 0; i < numberOfMen; i++) {
             string += stringArray[i] + " ";
@@ -61,8 +45,8 @@ public class DataHandling {
         return string;
     }
 
-    public static String[] initialization(int size, char gender) throws IOException {
-        String[] items = elementStringArray(readInputFile(), 0).split(", ");
+    public String[] initialization(int size, char gender) {
+        String[] items = elementStringArray(text, 0).split(", ");
         int i = 0;
         String[] strings = new String[size];
         for (int n = 0; n < items.length; n++) {
@@ -76,7 +60,7 @@ public class DataHandling {
         return strings;
     }
 
-    public static List<String> names(String[] clients, int size) {
+    public List<String> names(String[] clients, int size) {
         List<String> namesClients = new ArrayList<>();
         for (int i = 0; i < size * 3 - 2; i = i + 3) {
             namesClients.add(clients[i]);
@@ -84,7 +68,7 @@ public class DataHandling {
         return namesClients;
     }
 
-    public static List<Integer> ids(String[] clients, int size) {
+    public List<Integer> ids(String[] clients, int size) {
         List<Integer> idsClients = new ArrayList<>();
         for (int l = 1; l < size * 3 - 1; l = l + 3) {
             idsClients.add(Integer.parseInt(clients[l]));
@@ -92,32 +76,33 @@ public class DataHandling {
         return idsClients;
     }
 
-    private static char lastLetter() throws IOException {
-        String data = elementStringArray(readInputFile(), 0);
+    private char lastLetter() {
+        String data = elementStringArray(text, 0);
         char[] dataCharArray = data.toCharArray();
         return dataCharArray[dataCharArray.length - 1];
     }
 
-    public static List<String> sortA(String letter, String[] sortArray) throws IOException {
+    public List<String> sortArray(char letter, String[] sortArray, List<Integer> ids) {
         List<String> selectiveSorting = new ArrayList<>();
         int condition, k = 0;
-        if (Objects.equals(letter, lastLetter())) {
+        char let = lastLetter();
+        if (Objects.equals(letter, let)) {
             condition = 1;
         } else {
             condition = 3;
         }
         for (int z = 0; z < total * 2 - condition; z = z + 2) {
             int gh = Integer.parseInt(sortArray[z]);
-            if (gh == idMen.get(k)) {
-                selectiveSorting.add(sortArray[z+1]);
+            if (gh == ids.get(k)) {
+                selectiveSorting.add(sortArray[z + 1]);
                 k++;
             }
         }
         return selectiveSorting;
     }
 
-    public static void helper() throws IOException {
-        String[] newitems = elementStringArray(readInputFile(), 0).split(", ");
+    public void helper() {
+        String[] newitems = elementStringArray(text, 0).split(", ");
         total = newitems.length;
         for (int n = 0; n < newitems.length; n++) {
             char[] b = newitems[n].toCharArray();
@@ -129,7 +114,7 @@ public class DataHandling {
         }
     }
 
-    public static void createBaze() throws IOException {
+    public void createBaze() {
         //пременные для мужчин
         String menString = createString(initialization(numberOfMen, 'm'));
         String[] ma = menString.split(" ");
@@ -141,44 +126,58 @@ public class DataHandling {
         //заполнение массивов для мужчин
         namesMen = names(ma, numberOfMen);
         idMen = ids(ma, numberOfMen);
-        selectionMen = sortA("m", sortSecond);
+        selectionMen = sortArray('m', sortSecond, idMen);
         //заполнение массивов для женщин
         namesWomen = names(wa, numberOfWomen);
         idWomen = ids(wa, numberOfWomen);
-        selectionWomen = sortA("f", sortSecond);
+        selectionWomen = sortArray('f', sortSecond, idWomen);
     }
 
-    public static ArrayList<Integer> transfer(String selection, int size) {
+    public ArrayList<Integer> transfer(String selection, int size) {
         List<Integer> listArray = new ArrayList<>();
         String[] oneSelectionArray = selection.split(",");
-        for (int j = 0; j < numberOfMen; j++) {
+        for (int j = 0; j < size; j++) {
             listArray.add(Integer.parseInt(oneSelectionArray[j]));
         }
         return (ArrayList<Integer>) listArray;
     }
 
-    public static void putInMap() {
+    public void putInMap() {
         for (int i = 0; i < numberOfMen; i++) {
             mapForMen.put(idMen.get(i), transfer(selectionMen.get(i), numberOfMen));
         }
 
         for (int i = 0; i < numberOfWomen; i++) {
-            mapForWomen.put(idWomen.get(i), transfer(selectionWomen.get(i),numberOfWomen));
+            mapForWomen.put(idWomen.get(i), transfer(selectionWomen.get(i), numberOfWomen));
         }
     }
 
-    public static void run() throws IOException {
-        helper();
-        createBaze();
-        putInMap();
-        Magic.run(idMen, mapForMen, mapForWomen, namesMen, namesWomen);
-    }
 
-    public static List<Integer> getIdMen() {
+    public List<Integer> getIdMen() {
         return idMen;
     }
 
-    public static List<Integer> getIdWomen() {
+    public List<Integer> getIdWomen() {
         return idWomen;
+    }
+
+    public List<String> getNamesWomen() {
+        return namesWomen;
+    }
+
+    public List<String> getNamesMen() {
+        return namesMen;
+    }
+
+    public Map<Integer, List<Integer>> getMapForMen() {
+        return mapForMen;
+    }
+
+    public Map<Integer, List<Integer>> getMapForWomen() {
+        return mapForWomen;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
