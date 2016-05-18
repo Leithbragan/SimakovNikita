@@ -1,4 +1,4 @@
-John 1 m, Mary 2 f, Avraam 3 m, Olga 4 f, Max 5 m, Warya 6 f, Batyr 7 m, Masha 8 f, Rupert 9 m, Helena 10 f;
+John 1 m, Mary 2 f, Avraam 3 m, Olga 4 f, Max 5 m, Warya 6 f, Batyr 7 m, Masha 8 f, Rupert 9 m, Helena 10 f; 
 sort = 1 {2,6,4,10,8}
 2 {1,3,9,5,7}
 3 {6,10,8,2,4}
